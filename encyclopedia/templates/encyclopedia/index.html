@@ -1,0 +1,48 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+    Encyclopedia
+{% endblock %}
+
+{% block body %}
+    {% if search %}
+    <h1>All Search Results</h1>
+    {% elif newpage %}
+    <h1>Create a New Page</h1>
+    {% elif edit %}
+    <h1>Edit This Page</h1>
+    {% else %}
+    <h1>All Pages</h1>
+    {% endif %}
+
+    {% if newpage %}
+    <form action="{% url 'newpage' %}" method="POST">
+        {% csrf_token %}
+        <div>
+        <input type="text" name="title" placeholder="Entry Title" class="title">
+        <textarea name="body" rows="4" cols="50" placeholder="Enter the body of the page using Markdown"></textarea>
+        <br>
+        <input type="submit" value="Submit">
+        </div>
+    </form>
+    {% elif edit %}
+    <form action="{% url 'save' %}" method="POST">
+        {% csrf_token %}
+        <div>
+        <input type="text" name="title" value="{{ title }}" class="title">
+        <textarea name="body" rows="4" cols="50">{{ content }}</textarea>
+        <br>
+        <input type="submit" value="Submit">
+        </div>
+    </form>
+    {% else %}
+    <ul>
+        {% for entry in entries %}
+            <li><a href="{% url 'entry' title=entry %}">{{ entry }}</a></li>
+        {% empty %}
+            <li>No matching results...</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+{% endblock %}
